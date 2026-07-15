@@ -1,3 +1,108 @@
+# 🏆 2026 World Cup Champion Prediction Model
+
+Predicting each team's probability of winning the 2026 FIFA World Cup using an Elo rating system, a LightGBM classification model, and Poisson regression.
+
+## Project Overview
+
+This project is built on historical international football match data from 1872–2025, using a three-layer prediction architecture:
+
+1. **Elo Rating System**: Tracks each national team's strength over time, with higher weighting given to World Cup matches
+2. **LightGBM Three-Class Classification Model**: Predicts win/draw/loss for individual matches
+3. **Poisson Regression Model**: Predicts expected goals for both teams, used to simulate exact scorelines and knockout stage progression
+
+Finally, a Monte Carlo Simulation runs 20,000 knockout-stage trials to compute each team's probability of winning the championship.
+
+## 📊 Current Results (as of the 2026 World Cup Quarterfinal Stage)
+
+Simulation run: after the 2026 World Cup quarterfinal matchups were confirmed, 20,000 Monte Carlo simulations
+
+| Rank | Team | Champion Probability | Final Probability | Semifinal Probability |
+|------|------|----------------------|--------------------|------------------------|
+| 🥇 1 | Argentina | 24.6% | 40.2% | 70.9% |
+| 🥈 2 | Spain | 21.7% | 36.3% | 66.7% |
+| 3 | France | 18.7% | 37.3% | 61.6% |
+| 4 | England | 12.0% | 27.7% | 58.3% |
+| 5 | Morocco | 7.4% | 18.5% | 38.4% |
+| 6 | Norway | 5.8% | 16.4% | 41.7% |
+| 7 | Belgium | 5.4% | 12.8% | 33.5% |
+| 8 | Switzerland | 4.3% | 10.7% | 29.1% |
+
+> Full results available at [`results/champion_probabilities_qf.csv`](results/champion_probabilities_qf.csv)
+
+**Estimated quarterfinal win probabilities:**
+- Morocco 38.4% vs France 61.6%
+- England 58.3% vs Norway 41.7%
+- Spain 66.5% vs Belgium 33.5%
+- Argentina 70.3% vs Switzerland 29.7%
+
+## 🛠 Tech Stack
+
+- **Language**: Python 3.12
+- **Modeling**: LightGBM, statsmodels (GLM/Poisson)
+- **Data Processing**: pandas, numpy
+- **Evaluation**: scikit-learn
+- **Execution Environment**: Kaggle Notebook
+
+## 📁 Project Structure
+
+```
+worldcup-2026-prediction/
+├── README.md
+├── requirements.txt
+├── notebooks/
+│   └── worldcup_prediction.ipynb    # Full Kaggle Notebook (with execution results)
+├── src/
+│   ├── 01_elo_features.py           # Elo rating calculation + feature engineering
+│   ├── 02_train_models.py           # LightGBM + Poisson regression training
+│   ├── 03_simulate_tournament.py    # Monte Carlo tournament simulation (full bracket version)
+│   └── 04_quarterfinal_simulation.py # Monte Carlo simulation (quarterfinal-onward version, performance-optimized)
+├── results/
+│   └── champion_probabilities_qf.csv
+└── .gitignore
+```
+
+## 🚀 How to Run
+
+### 1. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Download the dataset
+This project uses a Kaggle dataset. Please download it yourself and place it in the `data/` folder:
+[International football results from 1872 to 2017](https://www.kaggle.com/datasets/martj42/international-football-results-from-1872-to-2017)
+
+### 3. Run in sequence
+```bash
+python src/01_elo_features.py
+python src/02_train_models.py
+python src/03_simulate_tournament.py
+```
+
+## 📈 Methodology
+
+### Elo Rating System
+- Starting score of 1500, with the K-factor adjusted by match importance (K=45 for World Cup matches, K=30 for regular matches)
+- Includes a home advantage adjustment (+60 points)
+
+### Model Evaluation
+- Train/test split by chronological order to avoid using future data to predict the past
+- LightGBM three-class accuracy is approximately 60% (random-guess baseline is 33%)
+- Known limitation: low recall for draw predictions — a common challenge in football prediction models
+
+### Knockout Stage Simulation
+- Uses a Poisson distribution to compute the score probability matrix for both teams
+- In the event of a drawn probability outcome, results are reallocated based on relative win probability (extra time/penalty shootouts are not separately modeled)
+
+## ⚠️ Known Limitations
+
+- Training data extends through 2025 and does not include real-time information such as current squads or injuries
+- Draw prediction performance is relatively weak; could be improved with a Dixon-Coles correction
+- Penalty shootouts are not modeled separately and are simplified via relative probability allocation
+
+## License
+
+For learning and research purposes only. The dataset's copyright belongs to the original Kaggle dataset author.
 # 🏆 2026 世界盃冠軍預測模型
 
 用 Elo 評分系統、LightGBM 分類模型與泊松迴歸，預測 2026 FIFA 世界盃各隊奪冠機率。
